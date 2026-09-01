@@ -28,7 +28,7 @@ Root directory: repository root.
 Add environment variables in Settings -> Environment Variables, then redeploy. Vercel's documentation notes that environment changes require a redeploy to take effect.
 
 ## 3) Cron
-`vercel.json` runs `/api/collect` every 5 minutes. Vercel Cron invokes the deployed function. Hobby cannot deploy schedules more frequent than daily; Pro/Enterprise support per-minute schedules.
+`vercel.json` runs `/api/collect` once per day so the project can deploy on Vercel Hobby. Hobby cron schedules are limited to once per day; more frequent schedules require Pro/Enterprise. The dashboard refreshes its server APIs every 60 seconds, while `/api/live/:symbol` can fetch current market/derivatives data on demand. If you need automated database snapshots every 5 minutes, upgrade to Pro or use an external scheduler to call the protected collection endpoint.
 
 ## 4) First verification
 After deployment:

@@ -28,3 +28,7 @@ Missing/failed optional providers remain `null`/empty; UMBRA never fabricates un
 - Never expose `SUPABASE_SERVICE_ROLE_KEY`, `AI_API_KEY`, `NEWS_API_KEY`, Helius keys, or social credentials to the client.
 - `NEXT_PUBLIC_*` variables are public by design.
 - Protect `/api/collect` with `UMBRA_CRON_SECRET`.
+
+
+## Hobby plan note
+The Vercel Cron is intentionally daily (`0 0 * * *`) so deployments are accepted on Hobby. Live market data can still be requested on demand via `/api/live/:symbol`, and the dashboard refreshes every 60 seconds.
