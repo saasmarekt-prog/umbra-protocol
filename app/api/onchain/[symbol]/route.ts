@@ -1,0 +1,2 @@
+import {db} from '@/lib/db/server';
+export async function GET(_req:Request,{params}:{params:Promise<{symbol:string}>}){const {symbol}=await params; const {data,error}=await db().from('onchain_snapshots').select('*').eq('symbol',symbol.toUpperCase()).order('captured_at',{ascending:false}).limit(50); if(error) return Response.json({error:error.message},{status:500}); return Response.json(data||[]);}
