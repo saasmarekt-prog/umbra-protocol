@@ -1,2 +1,0 @@
-import {db} from '@/lib/db/server';
-export async function GET(req:Request,{params}:{params:Promise<{symbol:string}>}){const {symbol}=await params; const u=new URL(req.url); const limit=Math.min(500,Math.max(1,Number(u.searchParams.get('limit')||100))); const {data,error}=await db().from('market_snapshots').select('*').eq('symbol',symbol.toUpperCase()).order('captured_at',{ascending:false}).limit(limit); if(error) return Response.json({error:error.message},{status:500}); return Response.json(data||[]);}
