@@ -1,34 +1,25 @@
-# UMBRA Cloud v0.4
+# UMBRA Cloud v0.5.1
 
-Vercel-ready UMBRA Intelligence MVP. No SQLite, no long-running worker, no local database.
+Vercel/Supabase deployment build. No SQLite and no local persistence.
 
-## Cloud architecture
-- Next.js App Router on Vercel
-- Vercel Cron -> `/api/collect`
-- Supabase Postgres + pgvector
-- Market: Binance spot/futures public APIs
-- News: NewsAPI (optional key)
-- Solana: RPC + Helius-ready adapter
-- Social: provider adapter via `SOCIAL_PROVIDER_URL`
-- AI: OpenAI-compatible HTTP endpoint via `AI_API_URL`
+## What changed
+- Live Binance public market fallback in `/api/assets` even before snapshots exist.
+- Transparent provisional score with low confidence when only market data is available.
+- `/api/radar` falls back to live market/futures anomaly detection when Supabase has no events.
+- `/api/health` now reports version and Supabase configuration status.
+- UI labels provisional scores explicitly.
 
-## Deploy
-1. Create a Supabase project and run `supabase/migrations/001_init.sql` in SQL Editor.
-2. Import this repository into Vercel.
-3. Add environment variables from `.env.example` in Vercel Settings.
-4. Redeploy after saving env vars.
-5. Open `/api/health`, then `/api/collect` (or let Cron run).
+## Required Vercel env
+- NEXT_PUBLIC_SUPABASE_URL
+- NEXT_PUBLIC_SUPABASE_ANON_KEY
+- SUPABASE_SERVICE_ROLE_KEY
+- UMBRA_CRON_SECRET
 
-Vercel Hobby only supports daily Cron schedules; this repo uses every 5 minutes, so use Vercel Pro/Enterprise for continuous collection. See Vercel Cron limits.
-
-## Provider status behavior
-Missing/failed optional providers remain `null`/empty; UMBRA never fabricates unavailable metrics.
-
-## Security
-- Never expose `SUPABASE_SERVICE_ROLE_KEY`, `AI_API_KEY`, `NEWS_API_KEY`, Helius keys, or social credentials to the client.
-- `NEXT_PUBLIC_*` variables are public by design.
-- Protect `/api/collect` with `UMBRA_CRON_SECRET`.
-
-
-## Hobby plan note
-The Vercel Cron is intentionally daily (`0 0 * * *`) so deployments are accepted on Hobby. Live market data can still be requested on demand via `/api/live/:symbol`, and the dashboard refreshes every 60 seconds.
+Optional:
+- HELIUS_API_KEY
+- NEWS_API_KEY
+- SOCIAL_PROVIDER_URL
+- SOCIAL_PROVIDER_API_KEY
+- AI_API_URL
+- AI_API_KEY
+- AI_MODEL
