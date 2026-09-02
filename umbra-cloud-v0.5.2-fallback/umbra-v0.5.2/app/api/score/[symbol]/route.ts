@@ -1,0 +1,2 @@
+import {db} from '@/lib/db/server';
+export async function GET(_req:Request,{params}:{params:Promise<{symbol:string}>}){const {symbol}=await params; const {data,error}=await db().from('umbra_scores').select('*').eq('symbol',symbol.toUpperCase()).order('calculated_at',{ascending:false}).limit(1).maybeSingle(); if(error) return Response.json({error:error.message},{status:500}); return Response.json(data||{symbol:symbol.toUpperCase(),status:'unavailable'});}
