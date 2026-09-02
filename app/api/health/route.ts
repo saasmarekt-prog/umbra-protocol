@@ -5,5 +5,5 @@ export async function GET(){
   if(env.supabaseUrl && env.supabaseServiceRoleKey){
     try { supabase = 'configured'; } catch { supabase='error'; }
   }
-  return Response.json({ok:true,service:'umbra',version:'0.5.1',timestamp:new Date().toISOString(),integrations:{supabase}});
+  return Response.json({ok:true,service:'umbra',version:'0.5.2',timestamp:new Date().toISOString(),integrations:{supabase}});
 }

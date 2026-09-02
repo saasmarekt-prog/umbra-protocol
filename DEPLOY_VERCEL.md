@@ -1,41 +1,23 @@
-# UMBRA Cloud — Vercel Deployment
+# UMBRA v0.5.2 Vercel deployment
 
-## 1) Supabase
-Create a Supabase project and run `supabase/migrations/001_init.sql` in SQL Editor.
-The database is Postgres; `pgvector` is enabled by the migration for future RAG/embeddings. Supabase documents pgvector as the Postgres extension for storing embeddings. 
+## Required environment variables
+- NEXT_PUBLIC_SUPABASE_URL
+- NEXT_PUBLIC_SUPABASE_ANON_KEY
+- SUPABASE_SERVICE_ROLE_KEY
+- UMBRA_CRON_SECRET
 
-Required Vercel environment variables:
-- `NEXT_PUBLIC_SUPABASE_URL`
-- `NEXT_PUBLIC_SUPABASE_ANON_KEY`
-- `SUPABASE_SERVICE_ROLE_KEY`
-- `UMBRA_CRON_SECRET`
-- `SOLANA_RPC_URL`
+## Recommended
+- COINGECKO_API_KEY
 
-Optional providers:
-- `HELIUS_API_KEY`
-- `NEWS_API_KEY`
-- `SOCIAL_PROVIDER_URL`
-- `SOCIAL_PROVIDER_API_KEY`
-- `AI_API_URL`
-- `AI_API_KEY`
-- `AI_MODEL`
+## Market provider behavior
+UMBRA tries Binance first. If Vercel receives HTTP 451/403/5xx or another provider error, UMBRA automatically falls back to Coinbase Exchange public market data, then CoinGecko.
 
-## 2) Vercel
-Import this repository into Vercel.
-Framework preset: Next.js.
-Root directory: repository root.
+No API key is required for Coinbase Exchange public market-data endpoints. CoinGecko Pro uses `COINGECKO_API_KEY` when configured.
 
-Add environment variables in Settings -> Environment Variables, then redeploy. Vercel's documentation notes that environment changes require a redeploy to take effect.
+After updating GitHub, redeploy the Vercel project. Then test:
 
-## 3) Cron
-`vercel.json` runs `/api/collect` once per day so the project can deploy on Vercel Hobby. Hobby cron schedules are limited to once per day; more frequent schedules require Pro/Enterprise. The dashboard refreshes its server APIs every 60 seconds, while `/api/live/:symbol` can fetch current market/derivatives data on demand. If you need automated database snapshots every 5 minutes, upgrade to Pro or use an external scheduler to call the protected collection endpoint.
+- `/api/health`
+- `/api/assets`
+- `/api/radar`
 
-## 4) First verification
-After deployment:
-- `GET /api/health`
-- open `/`
-- invoke `/api/collect` from Vercel Cron or a protected request using `Authorization: Bearer <UMBRA_CRON_SECRET>`
-- verify rows in Supabase tables
-
-## 5) Secrets
-Do not expose service-role, AI, News, Helius, or social keys in `NEXT_PUBLIC_*` variables. Vercel explicitly treats `NEXT_PUBLIC_*` values as client-visible.
+A successful `/api/assets` response should contain non-null `price`, `change24h`, and `volume24h` and a `source` such as `coinbase-exchange-public` or `coingecko` if Binance is unavailable.

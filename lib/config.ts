@@ -11,4 +11,5 @@ export const env = {
   aiApiUrl: process.env.AI_API_URL || '',
   aiApiKey: process.env.AI_API_KEY || '',
   aiModel: process.env.AI_MODEL || '',
+  coinGeckoApiKey: process.env.COINGECKO_API_KEY || '',
 };
